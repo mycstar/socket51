@@ -9,10 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -131,6 +129,11 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
+
+        Random rand = new Random();
+        int randomNum = rand.nextInt(100);
+        clientName = "client" + randomNum;
+
         try {
         ChatRoomGuiWithPrivate chatRoom = new ChatRoomGuiWithPrivate();
         chatRoom.setVisible(true);
