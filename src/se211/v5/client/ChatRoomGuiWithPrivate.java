@@ -120,6 +120,21 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
             throw new RuntimeException(e);
         }
     }
+    //update the client panel when anytime server send back client list,
+    // first clean the exist client list, then add all new ones.
+    public void updateClients(List<String> clientList) {
+
+        for (int i = 0; i < clientsModel.size(); i++) {
+
+            String oneClient = clientsModel.get(i);
+            clientsModel.removeElement(oneClient);
+            connectedClients.add(oneClient);
+        }
+        for (String nickname : connectedClients) {
+            connectedClients.add(nickname);
+            clientsModel.addElement(nickname);
+        }
+    }
 
     public void addClient(String clientName) {
         clientsModel.addElement(clientName);
@@ -133,15 +148,16 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
 
         Random rand = new Random();
         int randomNum = rand.nextInt(100);
-        clientName = "You: client" + randomNum;
+        clientName = "client" + randomNum;
 
 
         try {
             ChatRoomGuiWithPrivate chatRoom = new ChatRoomGuiWithPrivate();
             chatRoom.setVisible(true);
 
+            connectedClients = new ArrayList<>();
             //add youself to the client list
-           //clientsModel.addElement(clientName);
+            //clientsModel.addElement(clientName);
 
             //initialize the connection between client and server,
             chat(clientName, chatRoom);

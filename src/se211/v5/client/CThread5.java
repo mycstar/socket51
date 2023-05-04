@@ -38,7 +38,7 @@ public class CThread5 extends Thread {
                     List<String> clientList = getClientsList(reObj);
 
                     System.out.println("total client:" + clientList.size() + " " + reObj.getMessage());
-                    //ChatRoomGui6.updateClients(clientList);
+                    chatRoom.updateClients(clientList);
                 }
             }
 
