@@ -75,17 +75,15 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
                 String recipient = clientList.getSelectedValue();
                 if (recipient != null) {
                     //JOptionPane.showMessageDialog(this, "Printing complete");
-                    try {
 
-                        // start the private chat from here, first time pop up one specific private window.
-                        File file = new File("abc.txt");
-                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-                        PrivateChat privateW = new PrivateChat("You", recipient, out);
-                        privateW.setVisible(true);
+                    // start the private chat from here, first time pop up one specific private window.
+                    //File file = new File("abc.txt");
+                    //ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+                    PrivateChat privateW = new PrivateChat("You", recipient, outToServer);
+                    privateWindowMap.put(recipient,privateW);
+                    System.out.println("private window pop up:" + recipient);
 
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    privateW.setVisible(true);
 
                 }
             }
@@ -155,6 +153,8 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
 
+        //this random name just for test purpose,
+        // finally will remove this random name and set a name from user named
         Random rand = new Random();
         int randomNum = rand.nextInt(100);
         clientName = "client" + randomNum;
@@ -171,6 +171,8 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
         }
     }
 
+    //initialize the connection between client and server,
+    // send out and receive the first message, the received first message is current connected clients list
     public static void chat(String nickName, ChatRoomGuiWithPrivate chatRoom) throws Exception {
 
         int port = 6789;// port,
@@ -214,4 +216,9 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     }
 
 
+    public void updatePrivateWindow(ChatMessage reObj) {
+        PrivateChat privateW = privateWindowMap.get(reObj.getRecipient());
+        privateW.updatePrivateChat(reObj.getMessage());
+
+    }
 }

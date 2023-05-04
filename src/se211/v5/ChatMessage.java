@@ -3,7 +3,7 @@ package se211.v5;
 import java.io.Serializable;
 
 public class ChatMessage implements Serializable {
-    private int type;// MESSAGE =0, USERNAME=1, LOGOUT,PRIVATE,
+    private int type;// MESSAGE =0, USERNAME=1, LOGOUT=2, PRIVATE=3,
     private String message;
     private String sender;
     private String recipient;

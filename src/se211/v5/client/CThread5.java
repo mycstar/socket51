@@ -30,15 +30,20 @@ public class CThread5 extends Thread {
                 ChatMessage reObj = (ChatMessage) inFromServer.readObject();
                 editedData = reObj.getMessage();
 
-                if (reObj.getType() == 0) {
+                if (reObj.getType() == 0) {// normal message
                     System.out.println(editedData);
                     chatRoom.updateChat(editedData);
-                } else if (reObj.getType() == 1) {
+                } else if (reObj.getType() == 1) { // client list update message, hold all exist clients
 
                     List<String> clientList = getClientsList(reObj);
 
                     System.out.println("total client:" + clientList.size() + " " + reObj.getMessage());
                     chatRoom.updateClients(clientList);
+                }else if (reObj.getType() == 3) {// private message, hold private meg and sender.
+
+                    System.out.println("private meg:" + reObj.getSender() + " " + reObj.getMessage());
+                    // update the private window. first find the right window and then update the message area.
+                    chatRoom.updatePrivateWindow(reObj);
                 }
             }
 

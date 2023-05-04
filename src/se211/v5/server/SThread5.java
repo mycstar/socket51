@@ -11,7 +11,7 @@ public class SThread5 extends Thread {
     String clientData;
     String capitalizedData;
 
-    List<String> nameList;
+    List<String> clientNameList;
     List<Socket> clientList;
     String nickName;
 
@@ -20,8 +20,8 @@ public class SThread5 extends Thread {
     List< ObjectInputStream> clientInputList;
     ObjectInputStream inputStream;
 
-    public SThread5(List<String> clientNameList, String nickName1, Socket clientS, List< Socket> clientListI, List<ObjectInputStream> clientInputList1, ObjectInputStream inputStream1, List<ObjectOutputStream> clientOutputList1, ObjectOutputStream out1) {
-        nameList = clientNameList;
+    public SThread5(List<String> clientNameList1, String nickName1, Socket clientS, List< Socket> clientListI, List<ObjectInputStream> clientInputList1, ObjectInputStream inputStream1, List<ObjectOutputStream> clientOutputList1, ObjectOutputStream out1) {
+        clientNameList = clientNameList1;
         nickName = nickName1;
         connSocket = clientS;
         clientList = clientListI;
@@ -49,11 +49,12 @@ public class SThread5 extends Thread {
 
                 String outMeg = nickName + ":" + clientData;
                 //outClient.println(capitalizedData);
-                if(inMeg.getType()==2){
+
+                if(inMeg.getType()==2){// one client logout
 
                     userQuit = false;
 
-                    nameList.remove(nickName);
+                    clientNameList.remove(nickName);
                     clientOutputList.remove(out);
                     clientList.remove(connSocket);
                     clientInputList.remove(inputStream);
@@ -62,8 +63,29 @@ public class SThread5 extends Thread {
                     inputStream.close();
                     connSocket.close();
 
-                }else{
+                }else if(inMeg.getType()==1){//gather current clients and response with client list
 
+                    StringBuffer clientsStr = new StringBuffer();
+                    for (String entity : clientNameList        ) {
+                        clientsStr.append(entity);
+                        clientsStr.append(",");
+                    }
+                    if (clientsStr.substring(clientsStr.length() - 1).equals(",")) {
+                        clientsStr.deleteCharAt(clientsStr.length() - 1);
+                    }
+                    ChatMessage retMeg = new ChatMessage(1, clientsStr.toString());
+
+                    out.writeObject(retMeg);
+
+                }else if(inMeg.getType()==3){//private message, send back private message
+
+                    ChatMessage retMeg = new ChatMessage(3, outMeg);
+                    retMeg.setSender(inMeg.getSender());
+                    retMeg.setRecipient(inMeg.getRecipient());
+
+                    out.writeObject(retMeg);
+
+                }else {
                     ChatMessage meg = new ChatMessage(0, outMeg);
                     sendToAll(clientOutputList, meg);
                 }
@@ -78,7 +100,7 @@ public class SThread5 extends Thread {
 
         } catch (IOException | ClassNotFoundException e) {
 
-            nameList.remove(nickName);
+            clientNameList.remove(nickName);
             clientOutputList.remove(out);
             clientList.remove(connSocket);
             clientInputList.remove(inputStream);

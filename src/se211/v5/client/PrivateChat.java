@@ -54,10 +54,21 @@ public class PrivateChat extends JFrame {
 
     private void sendMessage(String sender, String recipient, String message) {
         try {
+            //init chat message object
             ChatMessage chatMessage = new ChatMessage(3, message);
+            chatMessage.setSender(sender);
+            chatMessage.setRecipient(recipient);
+
+            //send out the message
             out.writeObject(chatMessage);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    //update the new message to chat message area
+    public void updatePrivateChat(String message) {
+
+        System.out.println("hi, I am private message, need more code to show me");
     }
 }
