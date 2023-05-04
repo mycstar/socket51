@@ -20,9 +20,9 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     private JTextField messageField;
     private JButton sendButton;
     private JList<String> clientList;
+    // a list hold all client
     private static DefaultListModel<String> clientsModel;
 
-    private static ArrayList<String> connectedClients;
     private static String clientName;
 
     // response for send out message to server
@@ -103,11 +103,19 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         if (event.getSource() == sendButton) {
             String message = messageField.getText();
-            chatArea.append("You: " + message + "\n");
+
+            //chatArea.append("You: " + message + "\n");
             messageField.setText("");
             //send the typed meg to server
             sendToSever(message);
         }
+    }
+
+    public void updateChat(String message) {
+        if (message.contains(clientName)) {
+            message = message.replaceFirst(clientName, "You:");
+        }
+        chatArea.append(message + "\n");
     }
 
     private void sendToSever(String message) {
@@ -122,18 +130,16 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     }
 
     //update the client panel when anytime server send back client list,
-    // first clean the exist client list, then add all new ones.
+    // first clean exist client list, then add all new ones.
     public void updateClients(List<String> receivedClientList) {
 
         for (int i = 0; i < clientsModel.size(); i++) {
 
             String oneClient = clientsModel.get(i);
             clientsModel.removeElement(oneClient);
-            connectedClients.add(oneClient);
         }
         for (String nickname : receivedClientList) {
             if (!nickname.equals(clientName)) {
-                connectedClients.add(nickname);
                 clientsModel.addElement(nickname);
             }
         }
@@ -153,14 +159,10 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
         int randomNum = rand.nextInt(100);
         clientName = "client" + randomNum;
 
-
         try {
             ChatRoomGuiWithPrivate chatRoom = new ChatRoomGuiWithPrivate();
             chatRoom.setVisible(true);
-
-            connectedClients = new ArrayList<>();
-            //add youself to the client list
-            //clientsModel.addElement(clientName);
+            chatRoom.setTitle(clientName +" chat room");
 
             //initialize the connection between client and server,
             chat(clientName, chatRoom);
@@ -171,9 +173,8 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
 
     public static void chat(String nickName, ChatRoomGuiWithPrivate chatRoom) throws Exception {
 
-        int port = 6789;
-        String data;
-        String editedData;
+        int port = 6789;// port,
+
         Scanner scn = new Scanner(System.in);
         //handshake with server and establish a connection
         Socket clientSocket = new Socket("localhost", port);
@@ -190,29 +191,27 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
         System.out.println(nickName + " connected");
         outToServer.writeObject(meg);
 
-//        List<String> clientList = getClientsList(inFromServer);
-//        updateClients(clientList);
-
-        boolean endChat = false;
+        List<String> clientList = getClientsListAndFillClientPanel(inFromServer);
 
         CThread5 cthread = new CThread5(clientSocket, chatRoom, inFromServer);
         cthread.start();
-
-//        while (!endChat) {
-//            data = scn.nextLine();
-//            outToServer.writeObject(data);
-//
-//            if (data.equals("quit")) {
-//                endChat = true;
-//            }
-//        }
-
-/*        clientSocket.close();
-        inFromServer.close();
-        outToServer.close();*/
     }
 
-    public void updateChat(String message) {
-        chatArea.append(message + "\n");
+    private static List<String> getClientsListAndFillClientPanel(ObjectInputStream inFromServer) throws IOException, ClassNotFoundException {
+        Object obj = inFromServer.readObject();
+        ChatMessage meg = (ChatMessage) obj;
+        String clientStr = meg.getMessage();
+        ArrayList<String> clientList = new ArrayList<>();
+        String[] retArr = clientStr.split(",");
+
+        for (String nickName : retArr) {
+            if (!nickName.equals(clientName)) {
+                clientList.add(nickName);
+                clientsModel.addElement(nickName);
+            }
+        }
+        return clientList;
     }
+
+
 }
