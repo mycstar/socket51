@@ -120,9 +120,10 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
             throw new RuntimeException(e);
         }
     }
+
     //update the client panel when anytime server send back client list,
     // first clean the exist client list, then add all new ones.
-    public void updateClients(List<String> clientList) {
+    public void updateClients(List<String> receivedClientList) {
 
         for (int i = 0; i < clientsModel.size(); i++) {
 
@@ -130,9 +131,11 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
             clientsModel.removeElement(oneClient);
             connectedClients.add(oneClient);
         }
-        for (String nickname : connectedClients) {
-            connectedClients.add(nickname);
-            clientsModel.addElement(nickname);
+        for (String nickname : receivedClientList) {
+            if (!nickname.equals(clientName)) {
+                connectedClients.add(nickname);
+                clientsModel.addElement(nickname);
+            }
         }
     }
 
