@@ -32,7 +32,7 @@ public class CThread5 extends Thread {
 
                 if (reObj.getType() == 0) {
                     System.out.println(editedData);
-                    //   chatRoom.updateChat(editedData);
+                    chatRoom.updateChat(editedData);
                 } else if (reObj.getType() == 1) {
 
                     List<String> clientList = getClientsList(reObj);

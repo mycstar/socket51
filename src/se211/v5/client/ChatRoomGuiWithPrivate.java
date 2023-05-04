@@ -212,5 +212,7 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
         outToServer.close();*/
     }
 
-
+    public void updateChat(String message) {
+        chatArea.append(message + "\n");
+    }
 }
