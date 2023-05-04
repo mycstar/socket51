@@ -24,20 +24,20 @@ public class CThread5 extends Thread {
 
     public void run() {
         try {
-            while(!connSocket.isClosed()) {
+            while (!connSocket.isClosed()) {
                 String editedData = null;
 
-                ChatMessage reObj = (ChatMessage)inFromServer.readObject();
+                ChatMessage reObj = (ChatMessage) inFromServer.readObject();
                 editedData = reObj.getMessage();
 
-                if(reObj.getType()==0) {
+                if (reObj.getType() == 0) {
                     System.out.println(editedData);
-                 //   chatRoom.updateChat(editedData);
-                }else if(reObj.getType()==1){
+                    //   chatRoom.updateChat(editedData);
+                } else if (reObj.getType() == 1) {
 
-                    List<String>   clientList = getClientsList(reObj);
+                    List<String> clientList = getClientsList(reObj);
 
-                    System.out.println("total client:"+clientList.size()+" "+ reObj.getMessage());
+                    System.out.println("total client:" + clientList.size() + " " + reObj.getMessage());
                     //ChatRoomGui6.updateClients(clientList);
                 }
             }
@@ -48,7 +48,6 @@ public class CThread5 extends Thread {
             System.out.println(exception);
         }
     }
-
 
 
     private List<String> getClientsList(ChatMessage meg) throws IOException {
