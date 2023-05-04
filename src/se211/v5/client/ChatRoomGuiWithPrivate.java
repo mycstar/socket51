@@ -20,7 +20,7 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
     private JTextField messageField;
     private JButton sendButton;
     private JList<String> clientList;
-    private DefaultListModel<String> clientsModel;
+    private static DefaultListModel<String> clientsModel;
 
     private static ArrayList<String> connectedClients;
     private static String clientName;
@@ -109,6 +109,7 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
             sendToSever(message);
         }
     }
+
     private void sendToSever(String message) {
 
         ChatMessage meg = new ChatMessage(0, message);
@@ -132,13 +133,18 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
 
         Random rand = new Random();
         int randomNum = rand.nextInt(100);
-        clientName = "client" + randomNum;
+        clientName = "You: client" + randomNum;
+
 
         try {
-        ChatRoomGuiWithPrivate chatRoom = new ChatRoomGuiWithPrivate();
-        chatRoom.setVisible(true);
-        //initialize the connection between client and server,
-        chat(clientName, chatRoom);
+            ChatRoomGuiWithPrivate chatRoom = new ChatRoomGuiWithPrivate();
+            chatRoom.setVisible(true);
+
+            //add youself to the client list
+           //clientsModel.addElement(clientName);
+
+            //initialize the connection between client and server,
+            chat(clientName, chatRoom);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -146,7 +152,7 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
 
     public static void chat(String nickName, ChatRoomGuiWithPrivate chatRoom) throws Exception {
 
-        int port  = 6789;
+        int port = 6789;
         String data;
         String editedData;
         Scanner scn = new Scanner(System.in);
@@ -162,7 +168,7 @@ public class ChatRoomGuiWithPrivate extends JFrame implements ActionListener {
         // and receive the response message which hold all connected client
         ChatMessage meg = new ChatMessage(1, nickName);
         meg.setSender(nickName);
-        System.out.println(nickName+" connected");
+        System.out.println(nickName + " connected");
         outToServer.writeObject(meg);
 
 //        List<String> clientList = getClientsList(inFromServer);
